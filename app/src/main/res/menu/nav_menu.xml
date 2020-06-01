@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/navProfile"
+            android:icon="@drawable/ic_profile"
+            android:title="个人信息" />
+
+        <item
+            android:id="@+id/diaryList"
+            android:icon="@drawable/ic_list"
+            android:title="日记列表" />
+
+        <item
+            android:id="@+id/navQuit"
+            android:icon="@drawable/ic_quit"
+            android:title="退出" />
+    </group>
+</menu>

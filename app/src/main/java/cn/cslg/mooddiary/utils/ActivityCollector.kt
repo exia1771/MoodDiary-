@@ -16,8 +16,10 @@ object ActivityCollector {
     fun finish() {
         for (activity in activities) {
             if (activity.isFinishing) {
-                activity.finish()
+                removeActivity(activity)
+                continue
             }
+            activity.finish()
         }
         activities.clear()
     }

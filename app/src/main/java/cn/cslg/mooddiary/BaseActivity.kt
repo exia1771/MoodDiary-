@@ -1,18 +1,21 @@
 package cn.cslg.mooddiary
 
 import android.os.Bundle
-import android.os.PersistableBundle
 import androidx.appcompat.app.AppCompatActivity
 import cn.cslg.mooddiary.utils.ActivityCollector
+import cn.cslg.mooddiary.utils.LogUtil
 
-open class BaseActivity:AppCompatActivity() {
+open class BaseActivity : AppCompatActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        LogUtil.d("BaseActivity", this.localClassName + " onCreate")
         ActivityCollector.addActivity(this)
     }
 
+
     override fun onDestroy() {
+        LogUtil.d("BaseActivity", "${this.localClassName} onDestroy")
         super.onDestroy()
         ActivityCollector.removeActivity(this)
     }
