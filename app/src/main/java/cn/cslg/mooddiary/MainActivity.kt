@@ -88,7 +88,7 @@ class MainActivity : BaseActivity() {
             R.id.appAbout -> {
                 AlertDialog.Builder(this)
                     .setTitle("关于")
-                    .setMessage("学号:092217117\n姓名:徐文武\n程序功能介绍:心情日记\n程序版本:1.0")
+                    .setMessage("学号:092217117\n姓名:\n程序功能介绍:心情日记\n程序版本:1.0")
                     .setNegativeButton("取消") { _, _ ->
                     }
                     .show()
