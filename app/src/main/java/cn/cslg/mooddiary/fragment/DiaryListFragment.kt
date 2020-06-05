@@ -23,6 +23,10 @@ class DiaryListFragment : Fragment() {
     private lateinit var diaryViewModel: DiaryViewModel
     private lateinit var fragView: View
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

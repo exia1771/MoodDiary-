@@ -7,6 +7,8 @@ import kotlin.collections.ArrayList
 
 object ActivityCollector {
     private val activities = ArrayList<Activity>()
+    private var cityName: String? = ""
+
 
     fun addActivity(activity: Activity) {
         activities.add(activity)
@@ -18,11 +20,9 @@ object ActivityCollector {
 
     fun finish() {
         for (activity in activities) {
-            if (activity.isFinishing) {
-                removeActivity(activity)
-                continue
+            if (!activity.isFinishing) {
+                activity.finish()
             }
-            activity.finish()
         }
         activities.clear()
     }
@@ -59,4 +59,12 @@ object ActivityCollector {
                 R.drawable.bg_clear_day
             }
         }
+
+    fun setCityName(city: String?) {
+        cityName = city
+    }
+
+    fun getCityName(): String? {
+        return cityName
+    }
 }

@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import cn.cslg.mooddiary.entity.Diary
 import cn.cslg.mooddiary.model.DiaryViewModel
+import cn.cslg.mooddiary.utils.ActivityCollector
 import cn.cslg.mooddiary.utils.ActivityCollector.decideWeatherImage
 import cn.cslg.mooddiary.utils.ActivityCollector.getDatetime
 import cn.cslg.mooddiary.utils.LogUtil
@@ -58,7 +59,7 @@ class DiaryCreateActivity : AppCompatActivity() {
     private fun sendRequest(callback: okhttp3.Callback) {
         thread {
             val client = OkHttpClient()
-            val cityName = "常熟"
+            val cityName = ActivityCollector.getCityName()
             val request = Request.Builder()
                 .url("http://api.k780.com:88/?app=weather.future&weaid=$cityName&&appkey=10003&sign=b59bc3ef6191eb9f747dd4e83c99f2a4&format=json")
                 .build()
@@ -117,13 +118,17 @@ class DiaryCreateActivity : AppCompatActivity() {
     }
 
     private fun parseJSON(jsonData: String): String {
-        val parser = JsonParser()
-        val elements = parser.parse(jsonData)
-        val jsonObject = elements.asJsonObject
-        val weatherJSONArray = jsonObject.getAsJsonArray("result")
-        val weatherTodayJSON = weatherJSONArray[0].asJsonObject
-        val weather = weatherTodayJSON.get("weather")
-        return weather.asString
+        try {
+            val parser = JsonParser()
+            val elements = parser.parse(jsonData)
+            val jsonObject = elements.asJsonObject
+            val weatherJSONArray = jsonObject.getAsJsonArray("result")
+            val weatherTodayJSON = weatherJSONArray[0].asJsonObject
+            val weather = weatherTodayJSON.get("weather")
+            return weather.asString
+        } catch (e: Exception) {
+            return ""
+        }
     }
 
 }

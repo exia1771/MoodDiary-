@@ -20,7 +20,6 @@ import androidx.fragment.app.Fragment
 import cn.cslg.mooddiary.R
 import cn.cslg.mooddiary.utils.LogUtil
 import com.bumptech.glide.Glide
-import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 
 class ProfileFragment : Fragment() {
@@ -29,6 +28,7 @@ class ProfileFragment : Fragment() {
     private lateinit var avatar: CircleImageView
     private lateinit var nameInput: EditText
     private lateinit var emailInput: EditText
+    private lateinit var cityInput: EditText
     private lateinit var saveBtn: Button
 
 
@@ -50,6 +50,7 @@ class ProfileFragment : Fragment() {
         avatar.isClickable = true
         nameInput = fragView.findViewById(R.id.nameInput)
         emailInput = fragView.findViewById(R.id.emailInput)
+        cityInput = fragView.findViewById(R.id.cityInput)
         saveBtn = fragView.findViewById(R.id.saveBtn)
         uri = "default"
         restoreInfo()
@@ -63,13 +64,15 @@ class ProfileFragment : Fragment() {
             val savedUri = prefs.getString("avatar", "default")
             val name = prefs.getString("name", "未定义用户名")
             val email = prefs.getString("email", "未定义邮箱")
+            val city = prefs.getString("city", "未定义城市名")
             if (savedUri != "default") {
                 Glide.with(activity!!).load(Uri.parse(savedUri)).into(avatar)
-            }else{
+            } else {
                 Glide.with(activity!!).load(R.drawable.nav_icon).into(avatar)
             }
             nameInput.setText(name)
             emailInput.setText(email)
+            cityInput.setText(city)
         }
     }
 
@@ -107,7 +110,7 @@ class ProfileFragment : Fragment() {
                 if (resultCode == Activity.RESULT_OK && data != null) {
                     data.data?.let {
                         uri = it.toString()
-                        LogUtil.d("Profile", uri)
+                        LogUtil.d("Profile-Get", uri)
                         Glide.with(activity!!).load(it).into(avatar)
                     }
                 }
@@ -134,11 +137,16 @@ class ProfileFragment : Fragment() {
     private fun saveInfo() {
         saveBtn.setOnClickListener {
             activity?.getSharedPreferences("userInfo", Context.MODE_PRIVATE)?.edit {
-                LogUtil.d("Profile", uri)
-                putString("avatar", uri)
+                LogUtil.d("Profile-Save", uri)
+                if (uri != "default") {
+                    putString("avatar", uri)
+                }
                 putString("name", nameInput.text.toString())
                 putString("email", emailInput.text.toString())
-                Toast.makeText(activity, "修 改 完 成", Toast.LENGTH_SHORT).show()
+                putString("city", cityInput.text.toString())
+                Toast.makeText(activity, "修 改 完 成!", Toast.LENGTH_SHORT).show()
+                val intent = Intent("cn.cslg.mooddiary.REFRESH")
+                activity?.sendBroadcast(intent)
             }
         }
     }

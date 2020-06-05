@@ -2,6 +2,7 @@ package cn.cslg.mooddiary
 
 import android.Manifest
 import android.app.Activity
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -18,10 +19,10 @@ open class BaseActivity : AppCompatActivity() {
         ActivityCollector.addActivity(this)
     }
 
-
     override fun onDestroy() {
-        LogUtil.d("BaseActivity", "${this.localClassName} onDestroy")
         super.onDestroy()
+        LogUtil.d("BaseActivity", "${this.localClassName} onDestroy")
         ActivityCollector.removeActivity(this)
+
     }
 }

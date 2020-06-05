@@ -1,8 +1,10 @@
 package cn.cslg.mooddiary
 
 import android.app.AlertDialog
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
@@ -16,17 +18,17 @@ import cn.cslg.mooddiary.fragment.DiaryListFragment
 import cn.cslg.mooddiary.fragment.ProfileFragment
 import cn.cslg.mooddiary.model.DiaryViewModel
 import cn.cslg.mooddiary.utils.ActivityCollector
+import cn.cslg.mooddiary.utils.LogUtil
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.activity_main.*
-import org.w3c.dom.Text
 
 class MainActivity : BaseActivity() {
 
-    private lateinit var diaryViewModel: DiaryViewModel
     private val mediaPlayer = MediaPlayer()
     private val fragmentManager = supportFragmentManager
+    private val refreshReceiver = RefreshReceiver()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,11 +37,18 @@ class MainActivity : BaseActivity() {
     }
 
     private fun initViews() {
+        initVariable()
         initToolbar()
         initNavigation()
         restoreInfo()
         initFragment()
         initMediaPlayer()
+    }
+
+    private fun initVariable() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("cn.cslg.mooddiary.REFRESH")
+        registerReceiver(refreshReceiver, intentFilter)
     }
 
     private fun initMediaPlayer() {
@@ -51,20 +60,27 @@ class MainActivity : BaseActivity() {
 
     private fun restoreInfo() {
         val navView: NavigationView = findViewById(R.id.navView)
-        val navHeaderLayout = navView.inflateHeaderView(R.layout.nav_header)
+        val navHeaderLayout = navView.getHeaderView(0)
         val avatar: CircleImageView = navHeaderLayout.findViewById(R.id.avatar)
         val nameTextView: TextView = navHeaderLayout.findViewById(R.id.nameText)
         val emailTextView: TextView = navHeaderLayout.findViewById(R.id.emailText)
+        val cityTextView: TextView = navHeaderLayout.findViewById(R.id.cityText)
         val prefs = getSharedPreferences("userInfo", Context.MODE_PRIVATE)
         if (prefs != null) {
             val savedUri = prefs.getString("avatar", "default")
             val name = prefs.getString("name", "未定义用户名")
             val email = prefs.getString("email", "未定义邮箱")
+            val city = prefs.getString("city", "未定义城市名")
+            ActivityCollector.setCityName(city)
+            LogUtil.d("MainActivity-Restore", city.toString())
             if (savedUri != "default") {
-                Glide.with(this).load(Uri.parse(savedUri)).into(avatar)
+                Glide.with(this).load(Uri.parse(savedUri.toString())).into(avatar)
+            } else {
+                Glide.with(this).load(R.drawable.nav_icon).into(avatar)
             }
             nameTextView.text = name
             emailTextView.text = email
+            cityTextView.text = city
         }
     }
 
@@ -113,7 +129,6 @@ class MainActivity : BaseActivity() {
         }
     }
 
-
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.toolbar, menu)
         return true
@@ -127,7 +142,7 @@ class MainActivity : BaseActivity() {
             R.id.appAbout -> {
                 AlertDialog.Builder(this)
                     .setTitle("关于")
-                    .setMessage("学号:092217117\n姓名:徐文武\n程序功能介绍:心情日记\n程序版本:1.0")
+                    .setMessage("学号:092217117\n姓名:XXX\n程序功能介绍:记录日记并能够自动获得设定城市所在的当天天气情况(可自定义)\n程序版本:1.0.0")
                     .setNegativeButton("取消") { _, _ ->
                     }
                     .show()
@@ -156,9 +171,9 @@ class MainActivity : BaseActivity() {
     }
 
     private fun changeBackgroundMusic() {
-        if(!mediaPlayer.isPlaying){
+        if (!mediaPlayer.isPlaying) {
             mediaPlayer.start()
-        }else{
+        } else {
             mediaPlayer.pause()
         }
     }
@@ -172,5 +187,13 @@ class MainActivity : BaseActivity() {
         super.onDestroy()
         mediaPlayer.stop()
         mediaPlayer.release()
+        unregisterReceiver(refreshReceiver)
     }
+
+    inner class RefreshReceiver : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            restoreInfo()
+        }
+    }
+
 }
