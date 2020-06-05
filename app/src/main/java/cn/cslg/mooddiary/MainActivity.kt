@@ -143,6 +143,7 @@ class MainActivity : BaseActivity() {
                 AlertDialog.Builder(this)
                     .setTitle("关于")
                     .setMessage("学号:092217117\n姓名:XXX\n程序功能介绍:记录日记并能够自动获得设定城市所在的当天天气情况(可自定义)\n程序版本:1.0.0")
+                    .setMessage("学号:092217117\n姓名:\n程序功能介绍:心情日记\n程序版本:1.0")
                     .setNegativeButton("取消") { _, _ ->
                     }
                     .show()
@@ -197,3 +198,5 @@ class MainActivity : BaseActivity() {
     }
 
 }
+
+
